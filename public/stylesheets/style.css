@@ -1,8 +1,105 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 13px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background-color: #515151;
+  color: #33FF33;
+  width: auto;
+}
+
+
+#main{
+	width: 100%;
+	height: 95%;
+	overflow: hidden;
+}
+
+#chat{
+	
+	float:left;
+	width: 84%;
+	height: 100%;
+	border: 1px solid #33FF33;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+#chat ul{
+	list-style-type: none; 
+	padding :5px;
+	margin: 0px;
+}
+
+#chat li { 
+
+}
+
+#chat li:nth-child(odd) { 
+	background: #000; 
+}
+
+.pseudo{
+	font: bold;
+	color: white;
+}
+
+#users{
+	float:left;
+	width: 15%;
+	height: 100%;
+	border: 1px solid #33FF33;
+}
+
+#users ul{
+	list-style-type: none; 
+	padding :5px;
+	margin: 0px;
+}
+
+#users li { 
+	color: white;
+}
+
+#users li:nth-child(odd) { 
+	color: yellow;
+}
+
+
+#message{
+	width: 99%;
+	height: 5%;
+	border: 1px solid #33FF33;
+}
+
+#input_m{
+	width: 85%;
+	float: left;
+}
+
+#m{
+	width: 99%;
+}
+
+#input_submit{
+	width: 15%;
+	float: left;
+}
+
+#submit_button{
+	background-color: #006600;
+	border: 1px solid #003300;
+	color: white;
+	font: bold;
+	width: 99%;
+	float: left;
+	position:relative;
+	top:50%; 
 }
 
 a {
   color: #00B7FF;
 }
+
+.users_title {
+	text-align: center;
+	text-decoration :underline;
+}
+
