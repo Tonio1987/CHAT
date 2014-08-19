@@ -75,9 +75,9 @@
 
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(list){
-			$(list).each(elem){
-				$('#list_users').append($('<li>').text(elem));
-			}
+			$(list).each(function(){
+				$('#list_users').append($('<li>').text($(this).text()));
+			});
 		});
 
 		
