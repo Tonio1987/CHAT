@@ -60,7 +60,7 @@
 		// Encoi d'un message
 		$('form').submit(function(){
 			var msg = $('#m').val();
-			socket.emit('chat message', msg);
+			socket.emit('chat_message', msg);
 			$('#m').val('');
 			$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
 			autoScroll();
