@@ -6,7 +6,7 @@ module.exports = function (io) {
 		socket.on('chat_message', function(msg){
 			console.log(socket.pseudo + ' me parle ! Il me dit : ' + msg);
 			var ret = socket.pseudo+' : '+msg;
-			socket.broadcast.emit('chat message', ret);
+			socket.broadcast.emit('chat_message', ret);
 		});
 
 		socket.on('new_user', function(pseudo) {
