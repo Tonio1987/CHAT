@@ -14,12 +14,12 @@ module.exports = function (io) {
 			console.log('Nouvel utilisateur : '+socket.pseudo);
 		});
 
-	/*	
+		
 		socket.on('disconnect', function(){
 			console.log('user disconnected');
 			socket.broadcast.emit('chat message', 'Utilisateur '+socket.pseudo+' deconnecte');
 		});
-	*/
+	
 	});
 
 

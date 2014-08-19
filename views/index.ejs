@@ -68,7 +68,7 @@
 		});
 		
 		socket.on('chat message', function(msg){
-			
+			$('#list_messages').append($('<li>').text(msg));
 			autoScroll();
 		});
 		
