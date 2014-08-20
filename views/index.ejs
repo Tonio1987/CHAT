@@ -80,8 +80,8 @@
 		});
 
 		// Reception de la liste des utilisateirs
-		socket.on('list_users', function(list){
-			reloadUsersList(JSON.stringify(list));
+		socket.on('list_users', function(data){
+			reloadUsersList(data);
 		});
 
 		
@@ -90,12 +90,14 @@
 			$("#chat").scrollTop($("#chat")[0].scrollHeight);
 		}
 
-		function reloadUsersList(list){
-			var users = JSON.parse(list);
-			$.each(users, function( key, value ) {
-				$('#list_users').append($('<li>').text(value));
+		function reloadUsersList(data){
+
+			var users = $.parseJSON(data);
+			$.each(users, function(i, item) {
+				alert(item);
+				$('#list_users').append($('<li>').text(item.pseudo));
 			});
-			
+
 		}
 		
 	</script>
