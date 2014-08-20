@@ -35,7 +35,9 @@ module.exports = function (io) {
 			return user;
 		}
 
-		function removeItem(array, item) {
+		function removeItem(array, item){
+			console.log(array);
+			console.log(item);
     			for (var i = array.length - 1; i >= 0; i--)
 			        if (array[i].id === item.id) {
 			            array.splice(i, 1);
