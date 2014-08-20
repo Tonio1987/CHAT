@@ -91,11 +91,10 @@
 		}
 
 		function reloadUsersList(list){
-			$(list).each(function(){
-				console.log($(this));
-				
-				$('#list_users').append($('<li>').text($(this)));
-			});
+			$.each( list, function( key, value ) {
+				$('#list_users').append($('<li>').text(value));
+			}
+			
 		}
 		
 	</script>
