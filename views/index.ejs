@@ -93,7 +93,6 @@
 		function reloadUsersList(data){																																																																																											
 			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
-				alert(item);
 				$('#list_users').append($('<li>').text(item.pseudo));
 			});
 

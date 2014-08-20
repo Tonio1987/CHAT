@@ -23,8 +23,6 @@ module.exports = function (io) {
 		socket.on('disconnect', function(){
 			console.log('user disconnected');
 			removeItem(listUsers, socket.user);
-			// var index = listUsers.indexOf(socket.pseudo);
-			// listUsers.splice(index, 1);
 
 			socket.broadcast.emit('chat_message', 'Utilisateur '+socket.user.pseudo+' deconnecte');
 		});
@@ -36,8 +34,8 @@ module.exports = function (io) {
 		}
 
 		function removeItem(array, item){
-			console.log(array);
-			console.log(item);
+			console.log("Array : "+array);
+			console.log("Item : "+item);
     			for (var i = array.length - 1; i >= 0; i--)
 			        if (array[i].id === item.id) {
 			            array.splice(i, 1);
