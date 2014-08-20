@@ -25,8 +25,8 @@ module.exports = function (io) {
 		socket.on('disconnect', function(){
 			console.log('user disconnected');
 			console.log("Socket user : "+socket.user);
-			console.log("Socket user id : "+socket.user.id);
-			removeItem(listUsers, socket.user);
+			// console.log("Socket user id : "+socket.user.id);
+			// removeItem(listUsers, socket.user);
 
 			socket.broadcast.emit('chat_message', 'Utilisateur '+socket.user.pseudo+' deconnecte');
 		});
