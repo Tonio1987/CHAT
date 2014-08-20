@@ -7,7 +7,7 @@
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
 		$(document).ready(function () { 
-			var newHeight = $(window).height() - (3*$('#title_chat').height() + $('#message').height());
+			var newHeight = $(window).height() - (2*$('#ban').height() + $('#message').height());
 			var oldHeight = $('#main').height();
 			if (newHeight > oldHeight) {
 				$('#main').height(newHeight);
@@ -17,7 +17,12 @@
   </head>
   <body>
   	<div id="title_chat">
-		<h1>BB Black - Chat room - Powered by Node.JS</h1>
+		<div id="ban">
+			<img src="/images/logo.png" alt="Accueil">
+		</div>
+		<div id="title_text">
+			<h1>'at room - Powered by Node.JS</h1>
+		</div>
 	</div>
 	<!-- Section page-->
 	<div id="main">
@@ -26,7 +31,7 @@
 			</ul>
 		</div>
 		<div id="users">
-			<div class="users_title">
+			<div id="users_title">
 				Connected users
 			</div>
 			
@@ -34,6 +39,7 @@
 			</ul>
 		</div>
 	</div>
+	<br/>
 	<div id="message">
 		<form action="">
 			<div id="input_m">
