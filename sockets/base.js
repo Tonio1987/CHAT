@@ -28,7 +28,7 @@ module.exports = function (io) {
 			// console.log("Socket user id : "+socket.user.id);
 			// removeItem(listUsers, socket.user);
 
-			socket.broadcast.emit('chat_message', 'Utilisateur '+socket.user.pseudo+' deconnecte');
+			// socket.broadcast.emit('chat_message', 'Utilisateur '+socket.user.pseudo+' deconnecte');
 		});
 
 		function createObjectUser(pseudo){
