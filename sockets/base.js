@@ -14,6 +14,7 @@ module.exports = function (io) {
 			listUsers.push(pseudo);
 			socket.broadcast.emit('chat_message', 'Nouvel utilisateur connecte : '+socket.pseudo);
 			socket.broadcast.emit('list_users', listUsers);
+			socket.emit('list_users', listUsers);
 			console.log('Nouvel utilisateur : '+socket.pseudo);
 		});
 

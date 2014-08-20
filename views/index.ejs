@@ -81,15 +81,19 @@
 
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(list){
-			$(list).each(function(){
-				$('#list_users').append($('<li>').text($(this).text()));
-			});
+			reloadUsersList(list);
 		});
 
 		
 		// AutoScroll 
 		function autoScroll(){
 			$("#chat").scrollTop($("#chat")[0].scrollHeight);
+		}
+
+		function reloadUsersList(list){
+			$(list).each(function(){
+				$('#list_users').append($('<li>').text($(this).text()));
+			});
 		}
 		
 	</script>
