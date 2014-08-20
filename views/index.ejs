@@ -81,6 +81,7 @@
 
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(list){
+			console.log(list);
 			reloadUsersList(list);
 		});
 
