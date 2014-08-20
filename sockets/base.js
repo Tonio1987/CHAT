@@ -21,6 +21,15 @@ module.exports = function (io) {
 			console.log('Nouvel utilisateur : '+socket.user.pseudo);
 		});
 
+		socket.on('error', function(obj){
+			console.log('error detected');
+			console.log("error : "+obj);
+			// console.log("Socket user id : "+socket.user.id);
+			// removeItem(listUsers, socket.user);
+
+			// socket.broadcast.emit('chat_message', 'Utilisateur '+socket.user.pseudo+' deconnecte');
+		});
+
 		
 		socket.on('disconnect', function(){
 			console.log('user disconnected');

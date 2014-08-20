@@ -56,8 +56,12 @@
 
 	<script>
 	
-		var socket = io.connect('http://fonzztonio.no-ip.biz:3000');
-		
+		var socket = io.connect('http://fonzztonio.no-ip.biz:3000', {
+				  'reconnect': true,
+				  'reconnection delay': 500,
+				  'max reconnection attempts': 100
+		});
+
 		// On demande le pseudo au visiteur...
 		var pseudo = prompt('Quel est votre pseudo ?');
 		// Et on l'envoie avec le signal "petit_nouveau" (pour le diff de "message"
