@@ -1,9 +1,8 @@
 module.exports = function (io) { 
 	var uuid = require('node-uuid');
 	var listUsers = [];
-	var id = 
 
-	io.on('connection', function(socket){
+	io.sockets.on('connection', function(socket){
 		socket.on('chat_message', function(msg){
 			console.log(socket.pseudo + ' me parle ! Il me dit : ' + msg);
 			var ret = socket.pseudo+' : '+msg;
@@ -11,7 +10,10 @@ module.exports = function (io) {
 		});
 
 		socket.on('new_user', function(pseudo) {
+
 			socket.user = createObjectUser(pseudo);
+
+
 			listUsers.push(socket.user);
 			socket.broadcast.emit('chat_message', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
 			socket.broadcast.emit('list_users', listUsers);
