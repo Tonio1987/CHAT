@@ -74,7 +74,7 @@ body {
 }
 
 #users li:nth-child(odd) { 
-	color: yellow;
+	color: #FF6600;
 }
 
 #users_title{

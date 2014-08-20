@@ -92,6 +92,8 @@
 
 		function reloadUsersList(list){
 			$(list).each(function(){
+				console.log($(this));
+				
 				$('#list_users').append($('<li>').text($(this)));
 			});
 		}
