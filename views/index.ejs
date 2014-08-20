@@ -81,7 +81,7 @@
 
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(list){
-			reloadUsersList(list);
+			reloadUsersList(JSON.stringify(list));
 		});
 
 		
@@ -91,8 +91,6 @@
 		}
 
 		function reloadUsersList(list){
-			console.log(list);
-			console.log(JSON.stringify(list));
 			$.each(list, function( key, value ) {
 				$('#list_users').append($('<li>').text(value));
 			});
