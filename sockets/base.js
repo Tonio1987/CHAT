@@ -1,6 +1,6 @@
 module.exports = function (io) { 
 	var uuid = require('node-uuid');
-	var listUsers = {};
+	var listUsers = [];
 	var id = 
 
 	io.on('connection', function(socket){
