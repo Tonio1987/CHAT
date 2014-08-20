@@ -91,7 +91,8 @@
 		}
 
 		function reloadUsersList(list){
-			$.each(list, function( key, value ) {
+			var users = JSON.parse(list);
+			$.each(users, function( key, value ) {
 				$('#list_users').append($('<li>').text(value));
 			});
 			
