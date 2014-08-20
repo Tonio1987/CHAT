@@ -4,7 +4,7 @@ module.exports = function (io) {
 
 	io.sockets.on('connection', function(socket){
 		socket.on('chat_message', function(msg){
-			console.log(socket.pseudo + ' me parle ! Il me dit : ' + msg);
+			console.log(socket.user.pseudo + ' me parle ! Il me dit : ' + msg);
 			var ret = socket.pseudo+' : '+msg;
 			socket.broadcast.emit('chat_message', ret);
 		});
