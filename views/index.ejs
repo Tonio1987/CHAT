@@ -90,9 +90,8 @@
 			$("#chat").scrollTop($("#chat")[0].scrollHeight);
 		}
 
-		function reloadUsersList(data){
-
-			var users = $.parseJSON(data);
+		function reloadUsersList(data){																																																																																											
+			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
 				alert(item);
 				$('#list_users').append($('<li>').text(item.pseudo));
