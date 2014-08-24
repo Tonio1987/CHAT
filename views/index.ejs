@@ -1,27 +1,36 @@
 <!doctype html>
 <html>
   <head>
-	<title>Socket.IO chat on BB Black</title>
+	<title>InTech Support hangout</title>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
 	<script src="/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<script>
 		$(document).ready(function () { 
+			resizeWindow();
+		});
+	
+		function resizeWindow(){
 			var newHeight = $(window).height() - (2*$('#ban').height() + $('#message').height());
-			var oldHeight = $('#main').height();
-			if (newHeight > oldHeight) {
-				$('#main').height(newHeight);
-			}
+                        var oldHeight = $('#main').height();
+                        // if (newHeight > oldHeight) {
+                                $('#main').height(newHeight);
+                        //}
+		}
+
+		$(window).resize(function() {
+  			//resize just happened, pixels changed
+			resizeWindow();
 		});	
 	</script>
   </head>
   <body>
   	<div id="title_chat">
 		<div id="ban">
-			<img src="/images/logo.png" alt="Accueil">
+			<img src="/images/logo.gif" alt="Accueil">
 		</div>
 		<div id="title_text">
-			<h1>'at room - Powered by Node.JS</h1>
+			<h1>Support hangout - Powered by Node.JS</h1>
 		</div>
 	</div>
 	<!-- Section page-->
@@ -43,7 +52,7 @@
 	<div id="message">
 		<form action="">
 			<div id="input_m">
-				<input id="m" type="text"/>
+				<input id="m" type="text" autocomplete="off" />
 			</div>
 			<div id="input_submit">
 				<button id="submit_button">Send</button>
@@ -94,7 +103,7 @@
 			$("#chat").scrollTop($("#chat")[0].scrollHeight);
 		}
 
-		function reloadUsersList(data){																																																																																											
+		function reloadUsersList(data){														$('#list_users').empty();
 			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
 				$('#list_users').append($('<li>').text(item.pseudo));
