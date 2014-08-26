@@ -73,12 +73,19 @@
 	<script>
 	
 		var socket = io.connect('http://fonzztonio.no-ip.biz:3000', {
-			'reconnect': false,
-			'sync disconnect on unload':false
+			'reconnect': true,
+			'reconnection delay': 500,
+			'sync disconnect on unload': false
 		});
-
+		
+		
 		// On demande le pseudo au visiteur...
-		var pseudo = prompt('Quel est votre pseudo ?');
+		while(true){
+			var pseudo = prompt('Quel est votre pseudo ?');
+			if(pseudo.length > 0 && pseudo !== 'undefined' && pseudo !== 'null'){
+				break;
+			}
+		}
 		// Et on l'envoie avec le signal "petit_nouveau" (pour le diff de "message"
 		socket.emit('new_user', pseudo);
 				
@@ -104,7 +111,8 @@
 	
 		$("#m").keyup(function (e) {
 			if (e.keyCode == 13) {
-				var msg = $('#m').val();
+				var msg = $('#m').val()
+				msg = msg.substring(0, msg.length - 1);
 				socket.emit('chat_message', pseudo, msg);
 				$('#m').val('');
 				$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
@@ -123,7 +131,6 @@
 			// Text formatting
 			code = code.replace(/ /g, '&nbsp;');
 			code = code.replace(/(?:\r\n|\r|\n)/g, '<br />');
-			// code = code.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
 
 			$('#list_messages').append($('<li>').text(pseudo+' sending code : '));
 			$('#list_messages').append($('<div class=\"code_langage\"></div>').html(code));
