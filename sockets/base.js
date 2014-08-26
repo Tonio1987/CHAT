@@ -1,4 +1,4 @@
-module.exports = function (io) { 
+var socket_handler = function (io) { 
 	var uuid = require('node-uuid');
 	var listUsers = [];
 
@@ -32,7 +32,8 @@ module.exports = function (io) {
 		});
 
 		
-		socket.on('disconnect', function(){
+		socket.on('user_disconnect', function(){
+			
 			removeItem(listUsers, socket.user);
 			socket.broadcast.emit('list_users', listUsers);
 			socket.broadcast.emit('chat_message', 'Utilisateur '+socket.user.pseudo+' deconnecte');
@@ -57,3 +58,5 @@ module.exports = function (io) {
 		}
 	});
 }
+
+module.exports = socket_handler;

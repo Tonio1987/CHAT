@@ -98,6 +98,7 @@
 			$('#m').val('');
 			$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
 			autoScroll();
+			console.log("MSG_SENT");
 			return false;
 		});
 	
@@ -108,6 +109,7 @@
 				$('#m').val('');
 				$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
 				autoScroll();
+				console.log("MSG SENT");
 				return false;		
 			}
 		});
@@ -134,17 +136,21 @@
 			return false;
 		});
 
+		$(window).bind("beforeunload", function() { 	
+			socket.emit('user_disconnect');
+		});
 
 		/*#######################
-		 ### Partie reception ###
+		 ### Partie reception ###
 		#########################*/
 
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(data){
 			reloadUsersList(data);
-		});
+		})
 
 		function reloadUsersList(data){	
+			$('#list_users').empty();	
 			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
 				$('#list_users').append($('<li>').text(item.pseudo));
@@ -156,7 +162,7 @@
 		socket.on('chat_message', function(pseudo, msg){
 			$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
 			autoScroll();
-		});
+		})
 
 
 		// Reception de code  
@@ -166,18 +172,14 @@
 			code = code.replace(/(?:\r\n|\r|\n)/g, '<br />');
 		
 			$('#list_messages').append($('<li>').text(pseudo+" sending code : "));
-			$('#list_messages').append($('<div class=\"code_langage\"></div>').text(code));
+			$('#list_messages').append($('<div class=\"code_langage\"></div>').html(code));
 			
 			$('.code_langage').each(function(i, block) {
 				 hljs.highlightBlock(block);
 			});
 
 			autoScroll();
-		});
-
-		socket.on('disconnect', function(){
-			console.log('DISCONNECT !!!!');
-		});
+		})
 
 
 		// AutoScroll 
