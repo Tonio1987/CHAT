@@ -3,8 +3,16 @@
   <head>
 	<title>InTech Support hangout</title>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
-	<script src="/socket.io/socket.io.js"></script>
+	<script src="http://fonzztonio.no-ip.biz:3000/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	
+	<!--	
+	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
+
+	-->
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/highlight.css">
+
 	<script>
 		$(document).ready(function () { 
 			resizeWindow();
@@ -50,14 +58,13 @@
 	</div>
 	<br/>
 	<div id="message">
-		<form action="">
-			<div id="input_m">
-				<input id="m" type="text" autocomplete="off" />
-			</div>
-			<div id="input_submit">
-				<button id="submit_button">Send</button>
-			</div>
-		</form>
+		<div id="input_m">
+			<textarea id="m" rows="2" autocomplete="off"></textarea>
+		</div>
+		<div id="input_submit">
+			<button id="submit_button">Send</button>
+			<button id="code_button">Code</button>
+		</div>
 	</div>
 	
 	<!-- Section Socket IO -->
@@ -66,50 +73,118 @@
 	<script>
 	
 		var socket = io.connect('http://fonzztonio.no-ip.biz:3000', {
-				  'reconnect': true,
-				  'reconnection delay': 500,
-				  'max reconnection attempts': 100
+			'reconnect': false,
+			'sync disconnect on unload':false
 		});
 
 		// On demande le pseudo au visiteur...
 		var pseudo = prompt('Quel est votre pseudo ?');
 		// Et on l'envoie avec le signal "petit_nouveau" (pour le diff de "message"
 		socket.emit('new_user', pseudo);
+				
+		// Initialisation du highliter de code
+		hljs.initHighlightingOnLoad();
 		
-		// Encoi d'un message
-		$('form').submit(function(){
+
+		/*###################
+		 ### Partie envoi ###
+		 ####################*/
+
+		// envoi d'un message
+
+		$('#submit_button').click(function(){
 			var msg = $('#m').val();
-			socket.emit('chat_message', msg);
+			socket.emit('chat_message', pseudo, msg);
 			$('#m').val('');
 			$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
 			autoScroll();
 			return false;
 		});
-		
-		// Reception d'un message
-		socket.on('chat_message', function(msg){
-			$('#list_messages').append($('<li>').text(msg));
-			autoScroll();
+	
+		$("#m").keyup(function (e) {
+			if (e.keyCode == 13) {
+				var msg = $('#m').val();
+				socket.emit('chat_message', pseudo, msg);
+				$('#m').val('');
+				$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
+				autoScroll();
+				return false;		
+			}
 		});
+
+		// Envoi de code
+		$('#code_button').click(function(){
+			var code = $('#m').val();
+			socket.emit('code_message', pseudo, code);
+			$('#m').val('');
+		
+			// Text formatting
+			code = code.replace(/ /g, '&nbsp;');
+			code = code.replace(/(?:\r\n|\r|\n)/g, '<br />');
+			// code = code.replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+
+			$('#list_messages').append($('<li>').text(pseudo+' sending code : '));
+			$('#list_messages').append($('<div class=\"code_langage\"></div>').html(code));
+		
+			$('.code_langage').each(function(i, block) {
+				 hljs.highlightBlock(block);
+			});
+	
+			autoScroll();
+			return false;
+		});
+
+
+		/*#######################
+		 ### Partie reception ###
+		#########################*/
 
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(data){
 			reloadUsersList(data);
 		});
 
-		
-		// AutoScroll 
-		function autoScroll(){
-			$("#chat").scrollTop($("#chat")[0].scrollHeight);
-		}
-
-		function reloadUsersList(data){														$('#list_users').empty();
+		function reloadUsersList(data){	
 			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
 				$('#list_users').append($('<li>').text(item.pseudo));
 			});
 
 		}
+
+		// Reception d'un message
+		socket.on('chat_message', function(pseudo, msg){
+			$('#list_messages').append($('<li>').text(pseudo+' : '+msg));
+			autoScroll();
+		});
+
+
+		// Reception de code  
+		socket.on('code_message', function(pseudo, code){
+			// Text formating
+			code = code.replace(/ /g, '&nbsp;');
+			code = code.replace(/(?:\r\n|\r|\n)/g, '<br />');
+		
+			$('#list_messages').append($('<li>').text(pseudo+" sending code : "));
+			$('#list_messages').append($('<div class=\"code_langage\"></div>').text(code));
+			
+			$('.code_langage').each(function(i, block) {
+				 hljs.highlightBlock(block);
+			});
+
+			autoScroll();
+		});
+
+		socket.on('disconnect', function(){
+			console.log('DISCONNECT !!!!');
+		});
+
+
+		// AutoScroll 
+		function autoScroll(){
+			$("#chat").scrollTop($("#chat")[0].scrollHeight);
+		}
+
 		
 	</script>
   </body>

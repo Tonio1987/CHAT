@@ -136,12 +136,25 @@ body {
 	border: 2px solid #993300;
 	color: white;
 	font: bold;
-	width: 99%;
+	width: 49%;
 	float: left;
 	position:relative;
 	top:50%; 
 	line-height: 18px;
 }
+
+#code_button{
+	background-color: #FF6600;
+	border: 2px solid #993300;
+	color: white;
+	font: bold;
+	width: 49%;
+	float: left;
+	position:relative;
+	top:50%; 
+	line-height: 18px;
+}
+
 
 a {
   color: #00B7FF;
