@@ -80,7 +80,7 @@
 		var pseudo = prompt('Quel est votre pseudo ?');
 	
 		// On demande le pseudo au visiteur...
-		while(pseudo.length > 30 || pseudo.length == 0 || pseudo === 'undefined' || pseudo === 'null'){
+		while(pseudo === 'undefined' || pseudo === 'null' || pseudo.length > 30 || pseudo.length == 0){
 			var pseudo = prompt('Quel est votre pseudo ?\n !!! 30 caractères maximum !!! Champ vide, null et undefined sont interdits');
 		}
 
@@ -109,7 +109,7 @@
 			var chat_table = $('<div class=\"chat_table\">');
 			
 			$(user_pseudo).append($(user_img));
-			$(user_pseudo).append(pseudo+' : ');
+			$(user_pseudo).append(pseudo+" : ");
 			$(chat_table).append($(user_pseudo));
 			$(chat_table).append($(user_message).text(msg)),
 			$('#chat').append($(chat_table));	
@@ -132,7 +132,7 @@
 				var chat_table = $('<div class=\"chat_table\">');
 				
 				$(user_pseudo).append($(user_img));
-				$(user_pseudo).append(pseudo+' : ');
+				$(user_pseudo).append(pseudo+" : ");
 				$(chat_table).append($(user_pseudo));
 				$(chat_table).append($(user_message).text(msg));
 				$('#chat').append($(chat_table));	
@@ -165,8 +165,7 @@
 			var chat_table = $('<div class=\"chat_table\">');
 			
 			$(user_pseudo).append($(user_img));
-			$(user_pseudo).append(pseudo+' : ');
-			//	$(user_message).append(code);
+			$(user_pseudo).append(pseudo+" : ");
 			$(chat_table).append($(user_pseudo));
 			$(chat_table).append($(user_message).html(code)),
 			$('#chat').append($(chat_table));	
@@ -234,7 +233,6 @@
 			
 			$(user_pseudo).append($(user_img));
 			$(user_pseudo).append(pseudo+' : ');
-			//$(user_message).append(code);
 			$(chat_table).append($(user_pseudo));
 			$(chat_table).append($(user_message).html(code));
 			$('#chat').append($(chat_table));	

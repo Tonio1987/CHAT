@@ -40,18 +40,19 @@ body {
 
 
 #chat .chat_table { 
-	background-color: #FFF5CC; 
+	background-color: #FEF3E7; 
 
 }
 
 #chat .chat_table:nth-child(odd) { 
-	background-color: #FFFAE6; 
+	background-color: #FBF8F5; 
 }
 
 
 .chat_table{
 	width: 100%;
 	float:left;
+	padding: 4px;
 }
 
 .pseudos{
@@ -65,7 +66,6 @@ body {
 	font-weight: bold;
 	text-align: right;
 
-	padding:4px;
 
 }
 
@@ -74,16 +74,16 @@ body {
 }
 
 .messages{
-	padding: 4px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	vertical-align: top;
+	vertical-align: top; 
+	padding-top: 3px;
 }
 
 
 /* Users list */
 .pseudo{
-	font: bold;
+	font-weight: bold;
 	color: white;
 }
 
@@ -173,7 +173,7 @@ body {
 	background-color: #FF6600;
 	border: 2px solid #993300;
 	color: white;
-	font: bold;
+	font-weight: bold;
 	width: 49%;
 	float: left;
 	position:relative;
@@ -185,7 +185,7 @@ body {
 	background-color: #FF6600;
 	border: 2px solid #993300;
 	color: white;
-	font: bold;
+	font-weight: bold;
 	width: 49%;
 	float: left;
 	position:relative;
