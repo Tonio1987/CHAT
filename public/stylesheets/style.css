@@ -5,6 +5,8 @@ body {
   width: auto;
 }
 
+/* Top of the page */
+
 #ban{
 	float: left;
 }
@@ -15,7 +17,8 @@ body {
 	font-size: 15px;
 }
 
-									
+		
+/* Chat and user list */							
 #main{
 	width: 100%;
 	height: 95%;
@@ -23,7 +26,6 @@ body {
 }
 
 #chat{
-	
 	float:left;
 	width: 84%;
 	height: 100%;
@@ -36,20 +38,50 @@ body {
 	background-color: #FEF6EE; 
 }
 
-#chat ul{
-	list-style-type: none; 
-	padding :5px;
-	margin: 0px;
-}
 
-#chat li { 
+#chat .chat_table { 
+	background-color: #FFF5CC; 
 
 }
 
-#chat li:nth-child(odd) { 
-	background-color: #FFCC99; 
+#chat .chat_table:nth-child(odd) { 
+	background-color: #FFFAE6; 
 }
 
+
+.chat_table{
+	width: 100%;
+	float:left;
+}
+
+.pseudos{
+	width: auto;
+	float: left;	
+
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	vertical-align: top;	
+	font-weight: bold;
+	text-align: right;
+
+	padding:4px;
+
+}
+
+.pic_user{
+	padding-right: 10px;
+}
+
+.messages{
+	padding: 4px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	vertical-align: top;
+}
+
+
+/* Users list */
 .pseudo{
 	font: bold;
 	color: white;
@@ -62,6 +94,9 @@ body {
 	border: 2px solid #993300;
 	color: #993300;
 	background-color: #FBECDE; 
+	overflow-y: auto;
+	overflow-x: hidden;
+
 }
 
 #users ul{
@@ -99,6 +134,9 @@ body {
 	text-align: center;
 	text-decoration :underline;
 }
+
+/* New message */
+
 #message{
 	width: 100%;
 	height: 4%;
