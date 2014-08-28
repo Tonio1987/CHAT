@@ -14,16 +14,33 @@
 	<link rel="stylesheet" type="text/css" href="/stylesheets/highlight.css">
 
 	<script>
-		$(document).ready(function () { 
-			resizeWindow();
-		});
-	
+		
+		$.getDocHeight = function(){
+			return Math.max(
+				$(document).height(),
+				$(window).height(),
+				/* For opera: */
+				document.documentElement.clientHeight
+			);
+		};
+
 		function resizeWindow(){
-			var newHeight = $(window).height() - (2.5*$('#ban').height() + $('#message').height());
-                        var oldHeight = $('#main').height();
-                        // if (newHeight > oldHeight) {
-                                $('#main').height(newHeight);
-                        //}
+			var winHeight = $(window).height();
+			var titleChatHeight = $("#title_chat").height();
+			var messageHeight = $("#message").height();
+
+			$("#title_chat").hide();
+			$("#main").hide();
+			$("#message").hide();
+
+			$("#title_chat").height(0.10*winHeight);
+			$("#main").height(0.78*winHeight);
+			$("#message").height(0.04*winHeight);
+
+			$("#title_chat").show();
+			$("#main").show();
+			$("#message").show();
+
 		}
 
 		$(window).resize(function() {
@@ -76,7 +93,10 @@
 			'reconnection delay': 500,
 			'sync disconnect on unload': false
 		});
-		
+
+		var inactive = false;
+		var nbMsg = 0;
+
 		var pseudo = prompt('Quel est votre pseudo ?');
 	
 		// On demande le pseudo au visiteur...
@@ -84,6 +104,7 @@
 			var pseudo = prompt('Quel est votre pseudo ?\n !!! 25 caractères maximum !!! Champ vide, null et undefined sont interdits');
 		}
 	
+		resizeWindow();	
 		// Et on l'envoie avec le signal "new_user" (pour le diff de "message"
 		socket.emit('new_user', pseudo);
 				
@@ -99,7 +120,9 @@
 
 		$("#submit_button").click(function(){
 			var msg = $('#m').val();
-			socket.emit('chat_message', pseudo, msg);
+			if(msg.length > 0){
+				socket.emit('chat_message', pseudo, msg);
+			}
 			$('#m').val('');
 			return false;
 		});
@@ -108,7 +131,9 @@
 			if (e.keyCode == 13) {
 				var msg = $('#m').val()
 				msg = msg.substring(0, msg.length - 1);
-				socket.emit('chat_message', pseudo, msg);
+				if(msg.length > 0){
+					socket.emit('chat_message', pseudo, msg);
+				}
 				$('#m').val('');
 				return false;		
 			}
@@ -117,7 +142,9 @@
 		// Envoi de code
 		$("#code_button").click(function(){
 			var code = $('#m').val();
-			socket.emit('code_message', pseudo, code);
+			if(code.length > 0){
+				socket.emit('code_message', pseudo, code);
+			}
 			$('#m').val('');
 			return false;
 		});
@@ -160,6 +187,10 @@
 			$('#chat').append($(chat_table));	
 
 			autoScroll();
+
+			if(inactive == true){
+				notifyUser();
+			}
 		})
 
 
@@ -172,7 +203,7 @@
 			// Build HTML to insert
 			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"user\">');
 			var user_pseudo = $('<div class=\"pseudos\">');
-			var user_message = $('<div class=\"code_langage messages\">');
+			var user_message = $('<div class=\"code_langage code_messages\">');
 			var chat_table = $('<div class=\"chat_table\">');
 			
 			$(user_pseudo).append($(user_img));
@@ -186,8 +217,31 @@
 			});
 
 			autoScroll();
+
+			if(inactive == true){
+				notifyUser();
+			}
+
 		})
 
+		/*######################
+		### DESIGN an BEHAVE ###
+		######################*/
+		// handle notification on title
+		$(window).on("blur", function(){
+			inactive = true;
+		});
+
+		$(window).on("focus", function(){
+			document.title = "InTech Support Hangout";
+			inactive = false;
+			nbMsg = 0;
+		});
+
+		function notifyUser(){
+			nbMsg = nbMsg+1;
+			document.title = "("+nbMsg+") - InTech Support Hangout";
+		}
 
 		// AutoScroll 
 		function autoScroll(){
