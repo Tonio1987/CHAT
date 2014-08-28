@@ -80,10 +80,10 @@
 		var pseudo = prompt('Quel est votre pseudo ?');
 	
 		// On demande le pseudo au visiteur...
-		while(pseudo === 'undefined' || pseudo === 'null' || pseudo.length > 30 || pseudo.length == 0){
-			var pseudo = prompt('Quel est votre pseudo ?\n !!! 30 caractères maximum !!! Champ vide, null et undefined sont interdits');
+		while(pseudo === 'undefined' || pseudo === 'null' || pseudo.length > 25 || pseudo.length == 0){
+			var pseudo = prompt('Quel est votre pseudo ?\n !!! 25 caractères maximum !!! Champ vide, null et undefined sont interdits');
 		}
-
+	
 		// Et on l'envoie avec le signal "new_user" (pour le diff de "message"
 		socket.emit('new_user', pseudo);
 				
@@ -97,24 +97,10 @@
 
 		// envoi d'un message
 
-		$('#submit_button').click(function(){
+		$("#submit_button").click(function(){
 			var msg = $('#m').val();
 			socket.emit('chat_message', pseudo, msg);
 			$('#m').val('');
-			
-			// Build HTML to insert
-			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"user\">');
-			var user_pseudo = $('<div class=\"pseudos\">');
-			var user_message = $('<div class=\"messages\">');
-			var chat_table = $('<div class=\"chat_table\">');
-			
-			$(user_pseudo).append($(user_img));
-			$(user_pseudo).append(pseudo+" : ");
-			$(chat_table).append($(user_pseudo));
-			$(chat_table).append($(user_message).text(msg)),
-			$('#chat').append($(chat_table));	
-
-			autoScroll();
 			return false;
 		});
 	
@@ -124,57 +110,15 @@
 				msg = msg.substring(0, msg.length - 1);
 				socket.emit('chat_message', pseudo, msg);
 				$('#m').val('');
-
-				// Build HTML to insert
-				var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"user\">');
-				var user_pseudo = $('<div class=\"pseudos\">');
-				var user_message = $('<div class=\"messages\">');
-				var chat_table = $('<div class=\"chat_table\">');
-				
-				$(user_pseudo).append($(user_img));
-				$(user_pseudo).append(pseudo+" : ");
-				$(chat_table).append($(user_pseudo));
-				$(chat_table).append($(user_message).text(msg));
-				$('#chat').append($(chat_table));	
-	
-				autoScroll();
 				return false;		
 			}
 		});
 
 		// Envoi de code
-		$('#code_button').click(function(){
+		$("#code_button").click(function(){
 			var code = $('#m').val();
 			socket.emit('code_message', pseudo, code);
 			$('#m').val('');
-		
-			// Text formatting
-			code = code.replace(/&/g, '&amp;')
-			.replace(/"/g, '&quot;')
-			.replace(/'/g, '&#39;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;');
-
-			code = code.replace(/ /g, '&nbsp;');
-			code = code.replace(/(?:\r\n|\r|\n)/g, '<br />');
-
-			// Build HTML to insert
-			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"user\">');
-			var user_pseudo = $('<div class=\"pseudos\">');
-			var user_message = $('<div class=\"code_langage messages\">');
-			var chat_table = $('<div class=\"chat_table\">');
-			
-			$(user_pseudo).append($(user_img));
-			$(user_pseudo).append(pseudo+" : ");
-			$(chat_table).append($(user_pseudo));
-			$(chat_table).append($(user_message).html(code)),
-			$('#chat').append($(chat_table));	
-		
-			$('.code_langage').each(function(i, block) {
-				 hljs.highlightBlock(block);
-			});
-	
-			autoScroll();
 			return false;
 		});
 
@@ -195,7 +139,8 @@
 			$('#list_users').empty();	
 			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
-				$('#list_users').append($('<li>').text(item.pseudo));
+				var li = $("<li>");
+				$('#list_users').append($('<li>').html(item.pseudo));
 			});
 
 		}
@@ -223,7 +168,6 @@
 			// Text formating
 			code = code.replace(/ /g, '&nbsp;');
 			code = code.replace(/(?:\r\n|\r|\n)/g, '<br />');
-			code = htmlEscape(code);
 		
 			// Build HTML to insert
 			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"user\">');

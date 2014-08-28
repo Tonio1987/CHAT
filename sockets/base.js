@@ -5,42 +5,23 @@ var socket_handler = function (io) {
 	io.sockets.on('connection', function(socket){
 		
 		socket.on('new_user', function(pseudo) {
-			createObjectUser(pseudo);
-
-			socket.broadcast.emit('chat_message', 'SERVER', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
-			socket.broadcast.emit('list_users', listUsers);
-			socket.emit('list_users', listUsers);
-
+			reconnect(pseudo);
 			console.log('### - Nouvel utilisateur : '+socket.user.pseudo+' [ OK ]');
 		});
 
 		socket.on('chat_message', function(pseudo, msg){
-			if(socket.user != undefined && socket.user != null){
-				console.log('### - '+socket.user.pseudo+ ' : ' + msg + " [ OK ]");
-				socket.broadcast.emit('chat_message', socket.user.pseudo, msg);
-			}else{
-				createObjectUser(pseudo);
-				socket.broadcast.emit('chat_message', 'SERVER', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
-				socket.broadcast.emit('list_users', listUsers);
-				socket.emit('list_users', listUsers);
-				console.log('### - '+socket.user.pseudo + ' : ' + msg + " [ OK ]");
-				socket.broadcast.emit('chat_message', socket.user.pseudo, msg);
-		
-			}
+			reconnect(pseudo);
+			console.log('### - '+socket.user.pseudo+ ' : ' + msg + " [ OK ]");
+			socket.emit('chat_message', socket.user.pseudo, msg);
+			socket.broadcast.emit('chat_message', socket.user.pseudo, msg);
 		});
 		
 		socket.on('code_message', function(pseudo, code){
-			if(socket.user != undefined && socket.user != null){
-				console.log('### - User '+socket.user.pseudo+' sendong code [ OK ]');
-				socket.broadcast.emit('code_message', socket.user.pseudo, code);
-			}else{
-				createObjectUser(pseudo);
-				socket.broadcast.emit('chat_message', 'SERVER', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
-				socket.broadcast.emit('list_users', listUsers);
-				socket.emit('list_users', listUsers);
-				console.log('### - User '+socket.user.pseudo+' sendong code [ OK ]');
-				socket.broadcast.emit('code_message', socket.user.pseudo, code);
-			}
+			reconnect(pseudo);
+			code = handleHtmlEntities(code);
+			console.log('### - User '+socket.user.pseudo+' sendong code [ OK ]');
+			socket.emit('code_message', socket.user.pseudo, code);
+			socket.broadcast.emit('code_message', socket.user.pseudo, code);
 		});
 
 		
@@ -70,6 +51,17 @@ var socket_handler = function (io) {
 			listUsers.push(socket.user);
 		}
 		
+		// Handle exotic user pseudo
+		function handleHtmlEntities(data){
+			data = data.replace(/&/g, '&amp;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#39;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+			data = data.replace(/ /g, '&nbsp;');
+			return data;
+		}
+		
 		// Remove user
 		function removeUser(array, item){
 			for (var i = array.length - 1; i >= 0; i--)
@@ -77,6 +69,17 @@ var socket_handler = function (io) {
 			            array.splice(i, 1);
 		        	    break; // remove this line if there could be multiple matching elements
 		       	}
+		}
+		
+		// Reconnect user
+		function reconnect(pseudo){
+			if(socket.user === undefined || socket.user === null){
+				pseudo = handleHtmlEntities(pseudo);		
+				createObjectUser(pseudo);
+				socket.broadcast.emit('chat_message', 'SERVER', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
+				socket.broadcast.emit('list_users', listUsers);
+				socket.emit('list_users', listUsers);
+			}
 		}
 
 	});
