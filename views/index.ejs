@@ -65,7 +65,14 @@
 		</div>
 		<div id="users">
 			<div id="users_title">
-				Connected users
+				<span style="text-decoration: underline; text-align: center">Server info</span><br/><br/>
+				<img class="init" id="img_server_status_dis" src="/images/red_min.png" alt="">
+				<img class="init" id="img_server_status_con" src="/images/green_min.png" alt="">
+				<img class="init" id="img_server_status_err" src="/images/red_red_min.png" alt="">
+				<span class="init_sp" id="server_status"></span>
+				<span class="init_sp" id="nb_users"></span>
+				<img class="init" id="img_bu" src="/images/business_users_min.png" alt="users">
+
 			</div>
 			
 			<ul id="list_users">	
@@ -80,6 +87,8 @@
 		<div id="input_submit">
 			<button id="submit_button">Send</button>
 			<button id="code_button">Code</button>
+			<br/>
+			<img id="img_padlock" src="/images/padlock_open.png" alt="padlock" title="Lock/unlock chat scroll" >
 		</div>
 	</div>
 	
@@ -87,24 +96,24 @@
 
 
 	<script>
-	
+		var inactive = false;
+		var nbMsg = 0;
+		var lock_div = 0;
+		resizeWindow();	
+
+		// On demande le pseudo au visiteur...
+		var pseudo = prompt('Quel est votre pseudo ?');
+		while(pseudo === 'undefined' || pseudo === 'null' || pseudo.length > 25 || pseudo.length == 0){
+			var pseudo = prompt('Quel est votre pseudo ?\n !!! 25 caractères maximum !!! Champ vide, null et undefined sont interdits');
+		}
+
 		var socket = io.connect('http://fonzztonio.no-ip.biz:3000', {
 			'reconnect': true,
 			'reconnection delay': 500,
 			'sync disconnect on unload': false
 		});
 
-		var inactive = false;
-		var nbMsg = 0;
 
-		var pseudo = prompt('Quel est votre pseudo ?');
-	
-		// On demande le pseudo au visiteur...
-		while(pseudo === 'undefined' || pseudo === 'null' || pseudo.length > 25 || pseudo.length == 0){
-			var pseudo = prompt('Quel est votre pseudo ?\n !!! 25 caractères maximum !!! Champ vide, null et undefined sont interdits');
-		}
-	
-		resizeWindow();	
 		// Et on l'envoie avec le signal "new_user" (pour le diff de "message"
 		socket.emit('new_user', pseudo);
 				
@@ -160,10 +169,13 @@
 		// Reception de la liste des utilisateirs
 		socket.on('list_users', function(data){
 			reloadUsersList(data);
-		})
+		});
 
 		function reloadUsersList(data){	
-			$('#list_users').empty();	
+			$('#img_bu').show();	
+			$("#nb_users").empty();
+			$("#nb_users").append(data.length+" members");
+			$('#list_users').empty();
 			var users = $.parseJSON(JSON.stringify(data));
 			$.each(users, function(i, item) {
 				var li = $("<li>");
@@ -191,7 +203,7 @@
 			if(inactive == true){
 				notifyUser();
 			}
-		})
+		});
 
 
 		// Reception de code  
@@ -222,7 +234,58 @@
 				notifyUser();
 			}
 
-		})
+		});
+
+		// Message serveur
+		socket.on('host_message', function(pseudo, code){
+			var server_img = $('<img class=\"pic_user\" src=\"/images/server_icon_16.gif\" alt=\"server\">');
+			var user_pseudo = $('<div class=\"pseudos\">');
+			var user_message = $('<div class=\"messages\">');
+			var chat_table = $('<div class=\"chat_table server_message\">');
+			
+			$(user_pseudo).append($(server_img));
+			$(user_pseudo).append(pseudo+' : ');
+			$(chat_table).append($(user_pseudo));
+			$(chat_table).append($(user_message).text(msg));
+			$('#chat').append($(chat_table));	
+
+			autoScroll();
+
+			if(inactive == true){
+				notifyUser();
+			}
+			console.log('server msg');
+
+		});
+
+		/*######################
+		###  SERVER STATUS   ###
+		######################*/
+	
+		socket.on('connect_failed', function(){
+			$('#server_status').empty();
+			$('#server_status').append("Failed to connect | ");
+			$('#img_server_status_dis').hide();
+			$('#img_server_status_con').hide();
+			$('#img_server_status_err').show();
+		});
+
+		socket.on('connect', function () {
+			$('#server_status').empty();
+			$('#server_status').append("Connected | ");
+			$('#img_server_status_dis').hide();
+			$('#img_server_status_err').hide();
+			$('#img_server_status_con').show();
+
+		});
+
+		socket.on('disconnect', function () {
+			$('#server_status').empty();
+			$('#server_status').append("Disconnected | ");
+			$('#img_server_status_con').hide();
+			$('#img_server_status_con').hide();
+			$('#img_server_status_dis').show();
+		});
 
 		/*######################
 		### DESIGN an BEHAVE ###
@@ -245,8 +308,20 @@
 
 		// AutoScroll 
 		function autoScroll(){
-			$("#chat").scrollTop($("#chat")[0].scrollHeight);
+			if(lock_div == 0){
+				$("#chat").scrollTop($("#chat")[0].scrollHeight);
+			}
 		}
+
+		$("#img_padlock").click(function(){
+			if(lock_div == 0){
+				lock_div = 1;
+				$("#img_padlock").attr("src", "/images/padlock_close.png");
+			}else{
+				lock_div = 0;
+				$("#img_padlock").attr("src", "/images/padlock_open.png");
+			}	
+		});
 
 		
 	</script>

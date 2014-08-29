@@ -35,7 +35,7 @@ var socket_handler = function (io) {
 			if(socket.user != undefined && socket.user != null){
 				removeUser(listUsers, socket.user);
 				socket.broadcast.emit('list_users', listUsers);
-				socket.broadcast.emit('chat_message', 'SERVER', 'Utilisateur '+socket.user.pseudo+' deconnecte');
+				socket.broadcast.emit('host_message', 'SERVER', 'Utilisateur '+socket.user.pseudo+' deconnecte');
 				console.log('### - Socket user disconnected : '+socket.user.pseudo+' [ OK ]');
 			}else{
 				console.log("### Old session trying to disconnect ... [ ABORT ]");
@@ -76,9 +76,10 @@ var socket_handler = function (io) {
 			if(socket.user === undefined || socket.user === null){
 				pseudo = handleHtmlEntities(pseudo);		
 				createObjectUser(pseudo);
-				socket.broadcast.emit('chat_message', 'SERVER', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
+				socket.broadcast.emit('host_message', 'SERVER', 'Nouvel utilisateur connecte : '+socket.user.pseudo);
 				socket.broadcast.emit('list_users', listUsers);
 				socket.emit('list_users', listUsers);
+				console.log("Envoi de la liste des utilisateurs ... [ OK ]");
 			}
 		}
 

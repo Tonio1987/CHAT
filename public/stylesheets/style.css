@@ -71,6 +71,19 @@ body {
 	padding: 4px;
 }
 
+.server_message{
+	background-color: #00D8FF !important;
+}
+
+.server_message .pseudos{
+	color: white;
+	font-weight: bold;
+}
+.server_message .messages{
+	color: white;
+	font-weight: bold;
+}
+
 .pseudos{
 	width: auto;
 	float: left;	
@@ -111,6 +124,13 @@ body {
 	font-weight: bold;
 	color: white;
 }
+
+.init{
+	display: none;
+	line-height: 13px; 
+	vertical-align: middle;
+}
+
 
 #users{
 	float: left;
@@ -159,9 +179,8 @@ body {
 }
 
 #users_title{
-	font-size: 18px;
+	font-size: 11px;
 	text-align: center;
-	text-decoration :underline;
 }
 
 /* New message */
