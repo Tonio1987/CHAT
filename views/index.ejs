@@ -6,10 +6,6 @@
 	<script src="http://fonzztonio.no-ip.biz:3000/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	
-	<!--	
-	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/styles/default.min.css">
-
-	-->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/highlight.css">
 
@@ -82,7 +78,7 @@
 	<br/>
 	<div id="message">
 		<div id="input_m">
-			<textarea id="m" rows="2" autocomplete="off"></textarea>
+			<textarea id="m" rows="2" ></textarea>
 		</div>
 		<div id="input_submit">
 			<button id="submit_button">Send</button>
@@ -163,7 +159,7 @@
 		});
 
 		/*#######################
-		 ### Partie reception ###
+		 ### Partie reception ##
 		#########################*/
 
 		// Reception de la liste des utilisateirs
@@ -195,7 +191,7 @@
 			$(user_pseudo).append($(user_img));
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
-			$(chat_table).append($(user_message).text(msg));
+			$(chat_table).append($(user_message).html(linkify(msg)));
 			$('#chat').append($(chat_table));	
 
 			autoScroll();
@@ -237,7 +233,7 @@
 		});
 
 		// Message serveur
-		socket.on('host_message', function(pseudo, code){
+		socket.on('host_message', function(pseudo, msg){
 			var server_img = $('<img class=\"pic_user\" src=\"/images/server_icon_16.gif\" alt=\"server\">');
 			var user_pseudo = $('<div class=\"pseudos\">');
 			var user_message = $('<div class=\"messages\">');
@@ -323,7 +319,21 @@
 			}	
 		});
 
-		
+		function linkify(inputText) {
+			var replacedText, replacePattern1, replacePattern2, replacePattern3;
+			//URLs starting with http://, https://, or ftp://
+			replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+			replacedText = inputText.replace(replacePattern1, '<a href="$1" target="_blank">$1</a>');
+			//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+			replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+			replacedText = replacedText.replace(replacePattern2, '$1<a href="http://$2" target="_blank">$2</a>');
+			//Change email addresses to mailto:: links.
+			replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+			replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+	
+			return replacedText;
+		}	
+
 	</script>
   </body>
 </html>
