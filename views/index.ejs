@@ -154,6 +154,27 @@
 			return false;
 		});
 
+		// Envoi d'images printscreens etc. Drag and drop d'images
+		var obj = $("#main");
+
+		obj.on('drop', function (e) { 
+			$(this).css('border', '2px dotted #0B85A1');
+			e.preventDefault();
+			var files = e.originalEvent.dataTransfer.files;
+			//We need to send dropped files to Server
+		
+			var file = files[0], reader = new FileReader();
+			//When the file has been read...
+			
+			reader.onload = function(evt){
+        			socket.emit('user_image', pseudo, evt.target.result);
+    			};
+    			//And now, read the image and base64
+    			reader.readAsDataURL(file);  
+
+		});
+
+		// Gestion de la fermeture (deconnexion) de fenetre utilisateur
 		$(window).bind("beforeunload", function() { 	
 			socket.emit('user_disconnect');
 		});
@@ -191,7 +212,8 @@
 			$(user_pseudo).append($(user_img));
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
-			$(chat_table).append($(user_message).html(linkify(msg)));
+			$(chat_table).append($(user_message).text(linkify(msg)));
+
 			$('#chat').append($(chat_table));	
 
 			autoScroll();
@@ -250,8 +272,27 @@
 			if(inactive == true){
 				notifyUser();
 			}
-			console.log('server msg');
 
+		});
+
+		// User iamge reception
+		socket.on('user_image', function(pseudo, base64Image){
+			var server_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"server\">');
+			var user_pseudo = $('<div class=\"pseudos\">');
+			var user_message = $('<div class=\"messages\">');
+			var chat_table = $('<div class=\"chat_table\">');
+			
+			$(user_pseudo).append($(server_img));
+			$(user_pseudo).append(pseudo+' : ');
+			$(chat_table).append($(user_pseudo));
+			$(chat_table).append($(user_message).append('<img src="'+base64Image+'"/>'));
+			$('#chat').append($(chat_table));	
+
+			autoScroll();
+
+			if(inactive == true){
+				notifyUser();
+			}
 		});
 
 		/*######################
@@ -319,6 +360,8 @@
 			}	
 		});
 
+
+
 		function linkify(inputText) {
 			var replacedText, replacePattern1, replacePattern2, replacePattern3;
 			//URLs starting with http://, https://, or ftp://
@@ -334,6 +377,23 @@
 			return replacedText;
 		}	
 
+		// Prevent drag and drop on bad div
+		$(document).on('dragenter', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+		});
+
+		$(document).on('dragover', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			obj.css('border', '2px dotted #0B85A1');
+		});
+
+		$(document).on('drop', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+		});
+		
 	</script>
   </body>
 </html>

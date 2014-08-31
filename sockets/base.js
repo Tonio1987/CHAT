@@ -24,7 +24,14 @@ var socket_handler = function (io) {
 			socket.broadcast.emit('code_message', socket.user.pseudo, code);
 		});
 
-		
+		socket.on('user_image', function (pseudo, image) {
+			reconnect(pseudo);
+			console.log("### - Sending image ... [ OK ]");
+			//Received an image: broadcast to all
+			socket.broadcast.emit('user_image', socket.user.pseudo, image);
+			socket.emit('user_image', socket.user.pseudo, image);
+    		});		
+
 		socket.on('error', function(obj){
 			console.log('error detected');
 			console.log("error : "+obj);
