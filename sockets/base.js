@@ -1,6 +1,7 @@
 var socket_handler = function (io) { 
 	var uuid = require('node-uuid');
 	var listUsers = [];
+	var fs = require("fs"); //Load the filesystem module
 
 	io.sockets.on('connection', function(socket){
 		
@@ -11,9 +12,14 @@ var socket_handler = function (io) {
 
 		socket.on('chat_message', function(pseudo, msg){
 			reconnect(pseudo);
-			console.log('### - '+socket.user.pseudo+ ' : ' + msg + " [ OK ]");
-			socket.emit('chat_message', socket.user.pseudo, msg);
-			socket.broadcast.emit('chat_message', socket.user.pseudo, msg);
+			if(detectCommands(msg) == true){
+				console.log('### - User '+socket.user.pseudo+' launch command ; '+msg);
+				handleCommands(msg);
+			}else{
+				console.log('### - '+socket.user.pseudo+ ' : ' + msg + " [ OK ]");
+				socket.emit('chat_message', socket.user.pseudo, msg);
+				socket.broadcast.emit('chat_message', socket.user.pseudo, msg);
+			}
 		});
 		
 		socket.on('code_message', function(pseudo, code){
@@ -26,10 +32,16 @@ var socket_handler = function (io) {
 
 		socket.on('user_image', function (pseudo, image) {
 			reconnect(pseudo);
-			console.log("### - Sending image ... [ OK ]");
-			//Received an image: broadcast to all
-			socket.broadcast.emit('user_image', socket.user.pseudo, image);
-			socket.emit('user_image', socket.user.pseudo, image);
+			if(validFileBroadcasting(image)){
+				console.log("### - Broadcasting image ... ");
+				//Received an image: broadcast to all
+				socket.broadcast.emit('user_image', socket.user.pseudo, image);
+				console.log("### - Sending image to source  ... ");
+				socket.emit('user_image', socket.user.pseudo, image);
+				console.log("### - [ COMPLETED ]");	
+			}else{
+				socket.emit('host_message', 'SERVER', 'WARNING ! File size too large !!! Picture must have a size less thant 1.5 MB. Extension allowed : .bnp, .gif, .jpeg, .jpg, .tif, .png');
+			}	
     		});		
 
 		socket.on('error', function(obj){
@@ -87,6 +99,50 @@ var socket_handler = function (io) {
 				socket.broadcast.emit('list_users', listUsers);
 				socket.emit('list_users', listUsers);
 				console.log("Envoi de la liste des utilisateurs ... [ OK ]");
+			}
+		}
+
+		// Handle big files
+		function validFileBroadcasting(file){
+			if(file.length <= 2000000){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		function detectCommands(msg){
+			if(msg.substring(0, 8) == '/youtube'){
+				return true;
+			}else if(msg.substring(0, 11) == '/googlemaps'){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		function handleCommands(msg){
+			if(msg.substring(0, 8) == '/youtube'){
+				var url = msg.substring(9);
+				url = url.replace('http', '');
+				url = url.replace('v=', '');
+				// http://blabla | ? | v=dsfsdffd45dfg15df&trololo=f4sd5fsd4f4
+				var step1 = url.split("?");
+				// v=dsfsdffd45dfg15df | & | trololo=f4sd5fsd4f4 | & | trili=dsfsd5f45dsf5
+				var step2 = step1[step1.length-1].split("&");
+				// On recupere le premier params ?
+				var id = step2[0];
+				
+				var realUrl = '//www.youtube.com/embed/'+id;
+
+				socket.emit('youtube_message', socket.user.pseudo, realUrl);
+				socket.broadcast.emit('youtube_message', socket.user.pseudo, realUrl);
+			}else if(msg.substring(0, 11) == '/googlemaps'){
+				url = msg.substring(12);
+				socket.emit('googlemaps_message', socket.user.pseudo, url);
+				socket.broadcast.emit('googlemaps_message', socket.user.pseudo, url);
+			}else{
+				socket.emit('host_message', 'SERVER', 'BAD Command : '+msg);
 			}
 		}
 

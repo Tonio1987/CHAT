@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
 	<script src="http://fonzztonio.no-ip.biz:3000/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-	
+	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />	
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/highlight.css">
 
@@ -165,13 +165,50 @@
 		
 			var file = files[0], reader = new FileReader();
 			//When the file has been read...
+			// Test if file size is < at 1.5 MB
+			if(file.size <= 1499999 && testExt(file.name)){
 			
-			reader.onload = function(evt){
-        			socket.emit('user_image', pseudo, evt.target.result);
-    			};
-    			//And now, read the image and base64
-    			reader.readAsDataURL(file);  
+				var user_img = $('<img class=\"pic_user\" src=\"/images/server_icon_16.gif\" alt=\"user\">');
+				var user_pseudo = $('<div class=\"pseudos\">');
+				var user_message = $('<div class=\"messages\">');
+				var chat_table = $('<div class=\"chat_table server_message\">');
+				
+				$(user_pseudo).append($(user_img));
+				$(user_pseudo).append(pseudo+' : ');
+				$(chat_table).append($(user_pseudo));
+				$(chat_table).append($(user_message).append("Sending image to server ..."));
+	
+				$('#chat').append($(chat_table));	
+	
+				autoScroll();
 
+				if(inactive == true){
+					notifyUser();
+				}	
+					reader.onload = function(evt){
+	        			socket.emit('user_image', pseudo, evt.target.result);
+	    			};
+	    			//And now, read the image and base64
+	    			reader.readAsDataURL(file);  
+			}else{
+				var user_img = $('<img class=\"pic_user\" src=\"/images/server_icon_16.gif\" alt=\"user\">');
+				var user_pseudo = $('<div class=\"pseudos\">');
+				var user_message = $('<div class=\"messages\">');
+				var chat_table = $('<div class=\"chat_table server_message\">');
+				
+				$(user_pseudo).append($(user_img));
+				$(user_pseudo).append(pseudo+' : ');
+				$(chat_table).append($(user_pseudo));
+				$(chat_table).append($(user_message).append("WARNING ! File size too large !!! Picture must have a size less thant 1.5 MB. Extension allowed : .bnp, .gif, .jpeg, .jpg, .tif, .png"));
+	
+				$('#chat').append($(chat_table));	
+	
+				autoScroll();
+
+				if(inactive == true){
+					notifyUser();
+				}	
+			}
 		});
 
 		// Gestion de la fermeture (deconnexion) de fenetre utilisateur
@@ -210,6 +247,7 @@
 			var chat_table = $('<div class=\"chat_table\">');
 			
 			$(user_pseudo).append($(user_img));
+			$(user_pseudo).append(renderDate());
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
 			$(chat_table).append($(user_message).text(linkify(msg)));
@@ -237,6 +275,7 @@
 			var chat_table = $('<div class=\"chat_table\">');
 			
 			$(user_pseudo).append($(user_img));
+			$(user_pseudo).append(renderDate());
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
 			$(chat_table).append($(user_message).html(code));
@@ -262,6 +301,7 @@
 			var chat_table = $('<div class=\"chat_table server_message\">');
 			
 			$(user_pseudo).append($(server_img));
+			$(user_pseudo).append(renderDate());
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
 			$(chat_table).append($(user_message).text(msg));
@@ -277,15 +317,16 @@
 
 		// User iamge reception
 		socket.on('user_image', function(pseudo, base64Image){
-			var server_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"server\">');
+			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"server\">');
 			var user_pseudo = $('<div class=\"pseudos\">');
 			var user_message = $('<div class=\"messages\">');
 			var chat_table = $('<div class=\"chat_table\">');
 			
-			$(user_pseudo).append($(server_img));
+			$(user_pseudo).append($(user_img));
+			$(user_pseudo).append(renderDate());
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
-			$(chat_table).append($(user_message).append('<img src="'+base64Image+'"/>'));
+			$(chat_table).append($(user_message).append('<img id="pic_id_'+guiid()+'" class="uploaded_pic" zoom="off" src="'+base64Image+'"/>'));
 			$('#chat').append($(chat_table));	
 
 			autoScroll();
@@ -293,6 +334,29 @@
 			if(inactive == true){
 				notifyUser();
 			}
+		});
+
+		// youtube video sharing
+		socket.on('youtube_message', function(pseudo, url){
+			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"server\">');
+			var user_pseudo = $('<div class=\"pseudos\">');
+			var user_message = $('<div class=\"messages\">');
+			var chat_table = $('<div class=\"chat_table\">');
+			var iframe = $('<iframe width="420" height="315" src="'+url+'" frameborder="0" allowfullscreen></iframe>');
+
+			$(user_pseudo).append($(user_img));
+			$(user_pseudo).append(renderDate());
+			$(user_pseudo).append(pseudo+' : ');
+			$(chat_table).append($(user_pseudo));
+			$(chat_table).append($(user_message)).append($(iframe));
+			$('#chat').append($(chat_table));	
+
+			autoScroll();
+
+			if(inactive == true){
+				notifyUser();
+			}
+		
 		});
 
 		/*######################
@@ -349,7 +413,8 @@
 				$("#chat").scrollTop($("#chat")[0].scrollHeight);
 			}
 		}
-
+		
+		// Lock / Unlock scrolling
 		$("#img_padlock").click(function(){
 			if(lock_div == 0){
 				lock_div = 1;
@@ -360,8 +425,27 @@
 			}	
 		});
 
+		// Date formatting
+		function renderDate(){
+			var today = new Date();
+			var now = "";			
 
+			if(today.getHours() < 10){
+				now += '[0'+today.getHours()+":";
+			}else{
+				now += "["+today.getHours()+":";
+			}
 
+			if(today.getMinutes() < 10){
+				now += '0'+today.getMinutes()+"] - ";
+			}else{
+				now += today.getMinutes()+"] - ";
+			}
+			
+			return now;
+		}
+
+		// URL detection to linkify
 		function linkify(inputText) {
 			var replacedText, replacePattern1, replacePattern2, replacePattern3;
 			//URLs starting with http://, https://, or ftp://
@@ -394,6 +478,48 @@
 			e.preventDefault();
 		});
 		
+		// file extension test
+		function testExt(filename){
+			var ext	= filename.split('.').pop();
+			if(ext == filename) return false;
+			switch (ext.toLowerCase()) {
+				case 'jpg':
+				case 'tif':
+				case 'jpeg':
+				case 'bmp':
+				case 'png':
+				case 'gif':
+			        // etc
+			        return true;
+			}
+			return false;
+		}
+
+		// Zoom on/off a pic in chat
+		$("#chat").on("click", "img", function(e){
+			e.preventDefault();
+			var id = e.target.id;
+
+
+			if($("#"+id).attr("zoom") == "off"){
+				$("#"+id).attr("zoom", "on");
+				$("#"+id).addClass("zoom_pic");
+				$("#"+id).removeClass("uploaded_pic");
+			}
+			else{
+				$("#"+id).attr("zoom", "off");
+				$("#"+id).addClass("uploaded_pic");
+				$("#"+id).removeClass("zoom_pic");
+			}
+		});
+
+		function guiid() {
+			return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+		}
+		
+		function s4() {
+			return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+		}
 	</script>
   </body>
 </html>
