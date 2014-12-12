@@ -45,8 +45,8 @@ body {
 	float:left;
 	width: 84%;
 	height: 100%;
-	border: 2px solid #F18D01;
-	border-bottom: 2px solid #F18D01;
+	border: 1px solid #F18D01;
+	border-bottom: 1px solid #F18D01;
 	overflow-y: auto;
 	overflow-x: hidden;
 	color: #993300;
@@ -145,7 +145,7 @@ body {
 	float: left;
 	width: 15%;
 	height: 100%;
-	border: 2px solid #B35E0B;
+	border: 1px solid #B35E0B;
 	color: #993300;
 	background-color: #FFF2EB; 
 	overflow-y: auto;
@@ -208,7 +208,7 @@ body {
 
 #m{
 	width: 99%;
-	border: 2px solid #B35E0B;
+	border: 1px solid #B35E0B;
 	line-height: 25px;
 	color: #993300;
 	font-size: 15px;
@@ -216,7 +216,7 @@ body {
 }
 
 #m:focus{
-	border: 2px solid #993300;
+	border: 1px solid #993300;
 }
 
 #input_submit{

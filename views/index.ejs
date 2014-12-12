@@ -3,13 +3,17 @@
   <head>
 	<title>InTech Support hangout</title>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
-	<script src="http://192.168.159.133:3000/socket.io/socket.io.js"></script>
+	<script src="http://192.168.4.116:3000/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />	
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/highlight.css">
 
 	<script>
+		// init
+		function init(){
+			$('#unavailable').hide();
+		}
 		
 		$.getDocHeight = function(){
 			return Math.max(
@@ -30,7 +34,7 @@
 			$("#message").hide();
 
 			$("#title_chat").height(0.10*winHeight);
-			$("#main").height(0.78*winHeight);
+			$("#main").height(0.75*winHeight);
 			$("#message").height(0.04*winHeight);
 
 			$("#title_chat").show();
@@ -85,6 +89,9 @@
 			<button id="code_button">Code</button>
 			<br/>
 			<img id="img_padlock" src="/images/padlock_open.png" alt="padlock" title="Lock/unlock chat scroll" >
+			<img id="trash" src="/images/trash.png" alt="trash" title="Empty all chat messages">
+			<img id="available" src="/images/available.png" alt"availability" title="Precise your availability" >
+			<img id="unavailable" src="/images/unavailable.png" alt="unavailable" title="Precise your availability" >
 		</div>
 	</div>
 	
@@ -96,6 +103,7 @@
 		var nbMsg = 0;
 		var lock_div = 0;
 		resizeWindow();	
+		init();	
 
 		// On demande le pseudo au visiteur...
 		var pseudo = prompt('Quel est votre pseudo ?');
@@ -103,7 +111,7 @@
 			var pseudo = prompt('Quel est votre pseudo ?\n !!! 25 caractères maximum !!! Champ vide, null et undefined sont interdits');
 		}
 
-		var socket = io.connect('http://192.168.159.133:3000', {
+		var socket = io.connect('http://192.168.4.116:3000', {
 			'reconnect': true,
 			'reconnection delay': 500,
 			'sync disconnect on unload': false
@@ -115,7 +123,8 @@
 				
 		// Initialisation du highliter de code
 		hljs.initHighlightingOnLoad();
-		
+	
+	
 
 		/*###################
 		 ### Partie envoi ###
@@ -238,6 +247,8 @@
 
 		}
 
+
+
 		// Reception d'un message
 		socket.on('chat_message', function(pseudo, msg){
 			// Build HTML to insert
@@ -250,7 +261,7 @@
 			$(user_pseudo).append(renderDate());
 			$(user_pseudo).append(pseudo+' : ');
 			$(chat_table).append($(user_pseudo));
-			$(chat_table).append($(user_message).text(linkify(msg)));
+			$(chat_table).append($(user_message).html(linkify(msg)));
 
 			$('#chat').append($(chat_table));	
 
@@ -315,7 +326,7 @@
 
 		});
 
-		// User iamge reception
+		// User image reception
 		socket.on('user_image', function(pseudo, base64Image){
 			var user_img = $('<img class=\"pic_user\" src=\"/images/user_icon_16.gif\" alt=\"server\">');
 			var user_pseudo = $('<div class=\"pseudos\">');
@@ -413,6 +424,19 @@
 				$("#chat").scrollTop($("#chat")[0].scrollHeight);
 			}
 		}
+	
+		// Gestion de la disponibilite
+		$('#available').click(function(){
+			$('#available').hide();
+			$('#unavailable').show();
+			socket.emit(pseudo, "available");
+		});
+		
+		$('#unavailable').click(function(){
+			$('#unavailable').hide();
+			$('#available').show();
+			socket.emit(pseudo, "unavailable");
+		});
 		
 		// Lock / Unlock scrolling
 		$("#img_padlock").click(function(){
@@ -423,6 +447,10 @@
 				lock_div = 0;
 				$("#img_padlock").attr("src", "/images/padlock_open.png");
 			}	
+		});
+
+		$('#trash').click(function(){
+			$('#chat').empty();
 		});
 
 		// Date formatting

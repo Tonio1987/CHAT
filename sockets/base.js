@@ -40,7 +40,7 @@ var socket_handler = function (io) {
 				socket.emit('user_image', socket.user.pseudo, image);
 				console.log("### - [ COMPLETED ]");	
 			}else{
-				socket.emit('host_message', 'SERVER', 'WARNING ! File size too large !!! Picture must have a size less thant 1.5 MB. Extension allowed : .bnp, .gif, .jpeg, .jpg, .tif, .png');
+				socket.emit('host_message', 'SERVER', 'WARNING ! File size too large !!! Picture must have a size less than 1.5 MB. Extension allowed : .bnp, .gif, .jpeg, .jpg, .tif, .png');
 			}	
     		});		
 
