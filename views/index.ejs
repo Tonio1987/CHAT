@@ -3,7 +3,7 @@
   <head>
 	<title>InTech Support hangout</title>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
-	<script src="http://fonzztonio.no-ip.biz:3000/socket.io/socket.io.js"></script>
+	<script src="http://192.168.159.133:3000/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
 	<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />	
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.2/highlight.min.js"></script>
@@ -103,7 +103,7 @@
 			var pseudo = prompt('Quel est votre pseudo ?\n !!! 25 caractères maximum !!! Champ vide, null et undefined sont interdits');
 		}
 
-		var socket = io.connect('http://fonzztonio.no-ip.biz:3000', {
+		var socket = io.connect('http://192.168.159.133:3000', {
 			'reconnect': true,
 			'reconnection delay': 500,
 			'sync disconnect on unload': false
